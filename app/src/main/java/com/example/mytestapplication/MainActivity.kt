@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
         setContentView(binding.root)
 
         binding.btnSend.setOnClickListener {
+            println("Net Button Pressed...")
             sendMessage(binding.edtSendMessage.text.toString())
         }
     }
@@ -32,6 +33,7 @@ class MainActivity : ComponentActivity() {
                 val socket = Socket(IP_NUMB, PORT_NUMB)
                 val outPutStream = socket.getOutputStream()
                 val printOutput = PrintWriter(outPutStream)
+                println("Net Socket $socket")
                 printOutput.println(msg)
                 printOutput.flush()
                 val bufferedReader = BufferedReader(InputStreamReader(socket.getInputStream()))
@@ -59,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         val TAG = MainActivity.Companion::class.java.classes.toString()
-        val IP_NUMB = ""
+        val IP_NUMB = "192.168.29.88"
         val PORT_NUMB = 5000
     }
 }
