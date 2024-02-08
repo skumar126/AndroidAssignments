@@ -1,8 +1,15 @@
 package com.example.mytestapplication
 
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import androidx.activity.ComponentActivity
 import com.example.mytestapplication.databinding.LayoutActivityMainBinding
+import kotlinx.coroutines.Runnable
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.PrintWriter
+import java.net.Socket
 
 class MainActivity : ComponentActivity() {
 
@@ -12,6 +19,48 @@ class MainActivity : ComponentActivity() {
         binding = LayoutActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.btnSend.setOnClickListener {
+            sendMessage(binding.edtSendMessage.text.toString())
+        }
+    }
+
+    private fun sendMessage(msg: String) {
+        val handler = Handler()
+        val thread = Thread(Runnable {
+
+            try {
+                val socket = Socket(IP_NUMB, PORT_NUMB)
+                val outPutStream = socket.getOutputStream()
+                val printOutput = PrintWriter(outPutStream)
+                printOutput.println(msg)
+                printOutput.flush()
+                val bufferedReader = BufferedReader(InputStreamReader(socket.getInputStream()))
+                val str = bufferedReader.readLine()
+                handler.post(Runnable {
+                    val s = binding.tvReplyFromServer.text.toString()
+                    if (s.trim().length != 0) {
+                        binding.tvReplyFromServer.text = s + "\nFrom Server : " + str
+                    }
+                })
+                printOutput.close()
+                outPutStream.close()
+                socket.close()
+            } catch (exe: Exception) {
+                Log.e(TAG, "Exception Occurred" + exe.message)
+            }
+        })
+        thread.start()
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+    }
+
+    companion object {
+        val TAG = MainActivity.Companion::class.java.classes.toString()
+        val IP_NUMB = ""
+        val PORT_NUMB = 5000
     }
 }
 
