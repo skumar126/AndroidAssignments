@@ -31,22 +31,26 @@ class MainActivity : ComponentActivity() {
 
             try {
                 val socket = Socket(IP_NUMB, PORT_NUMB)
-                val outPutStream = socket.getOutputStream()
-                val printOutput = PrintWriter(outPutStream)
-                println("Net Socket $socket")
-                printOutput.println(msg)
-                printOutput.flush()
-                val bufferedReader = BufferedReader(InputStreamReader(socket.getInputStream()))
-                val str = bufferedReader.readLine()
-                handler.post(Runnable {
-                    val s = binding.tvReplyFromServer.text.toString()
-                    if (s.trim().length != 0) {
-                        binding.tvReplyFromServer.text = s + "\nFrom Server : " + str
-                    }
-                })
-                printOutput.close()
-                outPutStream.close()
-                socket.close()
+                if (socket != null) {
+                    val outPutStream = socket.getOutputStream()
+                    val printOutput = PrintWriter(outPutStream)
+                    println("Net Socket $socket")
+                    printOutput.println(msg)
+                    printOutput.flush()
+                    val bufferedReader = BufferedReader(InputStreamReader(socket.getInputStream()))
+                    val str = bufferedReader.readLine()
+                    handler.post(Runnable {
+                        val s = binding.tvReplyFromServer.text.toString()
+                        if (s.trim().length != 0) {
+                            binding.tvReplyFromServer.text = s + "\nFrom Server : " + str
+                        }
+                    })
+                    printOutput.close()
+                    outPutStream.close()
+                    socket.close()
+                } else {
+                    println("Filed to Create Socket")
+                }
             } catch (exe: Exception) {
                 Log.e(TAG, "Exception Occurred" + exe.message)
             }
