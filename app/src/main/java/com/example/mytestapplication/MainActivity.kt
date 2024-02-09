@@ -33,21 +33,30 @@ class MainActivity : ComponentActivity() {
                 val socket = Socket(IP_NUMB, PORT_NUMB)
                 if (socket != null) {
                     val outPutStream = socket.getOutputStream()
-                    val printOutput = PrintWriter(outPutStream)
-                    println("Net Socket $socket")
-                    printOutput.println(msg)
-                    printOutput.flush()
-                    val bufferedReader = BufferedReader(InputStreamReader(socket.getInputStream()))
-                    val str = bufferedReader.readLine()
-                    handler.post(Runnable {
-                        val s = binding.tvReplyFromServer.text.toString()
-                        if (s.trim().length != 0) {
-                            binding.tvReplyFromServer.text = s + "\nFrom Server : " + str
+                    if (outPutStream != null) {
+                        val printOutput = PrintWriter(outPutStream)
+                        if (printOutput != null) {
+                            println("Net Socket $socket")
+                            printOutput.println(msg)
+                            printOutput.flush()
+                            val bufferedReader =
+                                BufferedReader(InputStreamReader(socket.getInputStream()))
+                            val str = bufferedReader.readLine()
+                            handler.post(Runnable {
+                                val s = binding.tvReplyFromServer.text.toString()
+                                if (s.trim().length != 0) {
+                                    binding.tvReplyFromServer.text = s + "\nFrom Server : " + str
+                                }
+                            })
+                            printOutput.close()
+                            outPutStream.close()
+                            socket.close()
+                        } else {
+                            println("failed to create print out put ")
                         }
-                    })
-                    printOutput.close()
-                    outPutStream.close()
-                    socket.close()
+                    } else {
+                        println("Failed to create output stream")
+                    }
                 } else {
                     println("Filed to Create Socket")
                 }
