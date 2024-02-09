@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MyTestApplication</string>
+    <string name="enter_message_hint">Enter message</string>
+    <string name="button_title">Send</string>
 </resources>
